@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { cli } from 'gunshi';
+
+const execAsync = promisify(exec);
 
 interface EvologEntry {
   commitHash: string;
@@ -60,7 +63,7 @@ function parseEvolog(output: string): EvologEntry[] {
   return entries;
 }
 
-function createChangeForEntry(entry: EvologEntry): void {
+async function createChangeForEntry(entry: EvologEntry): Promise<void> {
   try {
     // Create a meaningful description for the change
     let description: string;
@@ -76,7 +79,10 @@ function createChangeForEntry(entry: EvologEntry): void {
     console.log(`Creating change for commit ${entry.commitHash}: ${description}`);
     
     // Use jj to create a new change
-    execSync(`jj new -m "${description}"`, { stdio: 'inherit' });
+    const { stdout, stderr } = await execAsync(`jj new -m "${description}"`);
+    
+    if (stdout) console.log(stdout);
+    if (stderr) console.error(stderr);
     
     console.log(`✓ Created change for ${entry.commitHash}`);
   } catch (error) {
@@ -99,7 +105,7 @@ const command = {
     
     try {
       // Get the evolog output
-      const evologOutput = execSync('jj evolog', { encoding: 'utf8' });
+      const { stdout: evologOutput } = await execAsync('jj evolog');
       
       // Parse the evolog entries
       const entries = parseEvolog(evologOutput);
@@ -131,7 +137,7 @@ const command = {
         
         // Process each entry for real
         for (const entry of entries) {
-          createChangeForEntry(entry);
+          await createChangeForEntry(entry);
         }
       }
       

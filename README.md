@@ -2,6 +2,8 @@
 
 > Turns everything in the current evolog into jj changes
 
+A TypeScript CLI tool that parses `jj evolog` output and creates individual jj changes for each entry. Built with [gunshi](https://gunshi.dev) for modern CLI development.
+
 ## Usage
 
 ```bash
@@ -28,4 +30,11 @@ This tool parses the output of `jj evolog` and creates a new jj change for each 
 
 - `--dry-run, -n`: Show what would be done without making changes
 - `--help, -h`: Show help information
-- `--version, -V`: Show version information
+- `--version, -v`: Show version information
+
+## Development
+
+This project uses:
+- [gunshi](https://gunshi.dev) - Modern JavaScript CLI framework
+- TypeScript for type safety
+- tsx for running TypeScript files directly
