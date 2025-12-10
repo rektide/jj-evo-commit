@@ -14,7 +14,7 @@ cd jj-evo-commit
 pnpm link
 ```
 
-## `jj-evo-commit Usage`
+## `jj-evo-commit` Usage
 
 ```bash
 # Run with dry run to see what would be created
@@ -47,3 +47,37 @@ Unlike just creating empty commits, this tool actually reproduces the state of y
 - `--version, -v`: Show version information
 
 You can specify either **commit IDs** (short hashes like `abc123def`) or **change IDs** (like `xyz123abc...`) in either list.
+
+## `jj-auto-describe` Usage
+
+```bash
+# Auto-generate commit messages for commits matching a selector
+jj-auto-describe 'main..@'
+jj-auto-describe 'draft()'
+jj-auto-describe '@-10..@'
+```
+
+This tool automatically generates improved commit messages for a range of commits using AI. It processes each commit in the specified range and uses `opencode` with a language model to analyze the commit and generate a clear, descriptive commit message.
+
+The tool:
+
+1. Takes a jj selector to identify commits to process
+2. For each commit, runs opencode to analyze the changes
+3. Uses AI to generate a meaningful commit message
+4. Updates the commit description using `jj describe`
+
+## `jj-select Usage`
+
+```bash
+# Get commit ID for a specific revision
+jj-select <revision>
+```
+
+A simple utility script that extracts the commit ID for a given revision. This is useful for scripting and automation where you need to get the raw commit ID without additional formatting.
+
+Example usage in scripts:
+
+```bash
+COMMIT_ID=$(jj-select @)
+echo "Current commit ID: $COMMIT_ID"
+```
