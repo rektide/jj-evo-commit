@@ -87,7 +87,7 @@ function createChangeForEntry(entry: EvologEntry): void {
 const command = {
   name: 'jj-evo-commit',
   description: 'Turns everything in the current evolog into jj changes',
-  args: {
+  options: {
     dryRun: {
       type: 'boolean',
       short: 'n',
