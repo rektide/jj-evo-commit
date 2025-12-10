@@ -1,0 +1,3 @@
+#!/bin/sh
+#exec jj log --no-graph -T 'commit_id ++ " " ++ change_id ++ "\n"' -r $1
+exec jj log --no-graph -T 'commit_id++"\n"' -r $1
