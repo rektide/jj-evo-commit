@@ -11,7 +11,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "tsc",
-		"dev": "tsx jj-evo-commit.ts"
+		"format": "oxfmt"
 	},
 	"repository": {
 		"type": "git",
@@ -31,7 +31,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^20.0.0",
-		"tsx": "^4.0.0",
+		"oxfmt": "^0.17.0",
 		"typescript": "^5.0.0"
 	}
 }
