@@ -1,37 +1,37 @@
 {
-  "name": "jj-evo-commit",
-  "version": "1.0.0",
-  "description": "Turns everything in the current evolog into jj changes",
-  "main": "jj-evo-commit.ts",
-  "bin": {
-    "jj-evo-commit": "./jj-evo-commit.ts",
-    "jj-auto-describe": "./jj-auto-describe",
-    "jj-select": "./jj-select"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "dev": "tsx jj-evo-commit.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://archive.voodoowarez.com/jj-evo-commit"
-  },
-  "keywords": [
-    "jj",
-    "jujutsu",
-    "evolog",
-    "version-control"
-  ],
-  "author": "rektide de la faye",
-  "license": "MIT",
-  "type": "module",
-  "dependencies": {
-    "gunshi": "^0.26.3"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "tsx": "^4.0.0",
-    "typescript": "^5.0.0"
-  }
+	"name": "jj-evo-commit",
+	"version": "1.0.0",
+	"description": "Turns everything in the current evolog into jj changes",
+	"main": "jj-evo-commit.ts",
+	"bin": {
+		"jj-evo-commit": "./jj-evo-commit.ts",
+		"jj-auto-describe": "./jj-auto-describe",
+		"jj-select": "./jj-select"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "tsc",
+		"dev": "tsx jj-evo-commit.ts"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://archive.voodoowarez.com/jj-evo-commit"
+	},
+	"keywords": [
+		"jj",
+		"jujutsu",
+		"evolog",
+		"version-control"
+	],
+	"author": "rektide de la faye",
+	"license": "MIT",
+	"type": "module",
+	"dependencies": {
+		"gunshi": "^0.26.3"
+	},
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"tsx": "^4.0.0",
+		"typescript": "^5.0.0"
+	}
 }
