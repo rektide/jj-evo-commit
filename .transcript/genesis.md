@@ -67,7 +67,7 @@ I've successfully updated the program to **recreate the actual state** from each
 ### How it works now:
 
 1. Gets evolog entries in chronological order (`--reversed`)
-2. For each entry, uses `jj new ${commitHash} -m "${description}"` 
+2. For each entry, uses `jj new ${commitHash} -m "${description}"`
 3. This creates a new commit with the exact file state from that evolog commit
 4. Each new commit has the correct description and parent relationships
 
@@ -84,7 +84,7 @@ The program now truly recreates the evolution of changes, allowing you to see ho
 
 ## User
 
-now add --skip which let's us skip over certain commits. accept either the commit id or the change id for a change. also add an --pick which does the opposite, of only creating changes for the given picks. 
+now add --skip which let's us skip over certain commits. accept either the commit id or the change id for a change. also add an --pick which does the opposite, of only creating changes for the given picks.
 
 ---
 
@@ -375,21 +375,24 @@ Excellent! The new `--skip` and `--pick` options have been successfully implemen
 Successfully implemented `--skip` and `--pick` filtering options:
 
 ### New Options:
+
 - **`--skip, -s <ids>`**: Comma-separated list of commit IDs or change IDs to skip
 - **`--pick, -p <ids>`**: Comma-separated list of commit IDs or change IDs to process (only these will be processed)
 
 ### Key Features:
+
 1. **Flexible ID Support**: Accepts both commit IDs (short hashes) and change IDs
 2. **Pick Precedence**: When both skip and pick are specified, pick takes precedence
 3. **Smart Filtering**: The logic properly handles overlapping skip/pick specifications
 4. **Detailed Reporting**: Shows how many entries were skipped/processed
 
 ### Usage Examples:
+
 ```bash
 # Skip specific commits
 npm run dev -- --skip abc123def,xyz789abc
 
-# Only process specific commits  
+# Only process specific commits
 npm run dev -- --pick abc123def,xyz789abc
 
 # Use change IDs to process all commits in a change's evolution
@@ -719,7 +722,7 @@ Tool: bash
 
 ## Assistant
 
-The origin remote is configured correctly. The issue is that the GitHub repository `github.com:rektide/jj-evo-commit` doesn't exist or we don't have access to it. 
+The origin remote is configured correctly. The issue is that the GitHub repository `github.com:rektide/jj-evo-commit` doesn't exist or we don't have access to it.
 
 Since we can't push to origin due to repository access issues, let me suggest a few alternatives:
 
@@ -740,9 +743,11 @@ Tool: bash
 The repository URL suggests it should be under your GitHub account. Let me help you create the repository or set up an alternative. Here are your options:
 
 ## Option 1: Create the GitHub Repository
+
 You need to create the repository at https://github.com/new with the name `jj-evo-commit` under your account `rektide`.
 
 ## Option 2: Use a Different Remote
+
 Let me show you how to add a different remote that you have access to:
 
 ```
@@ -754,6 +759,7 @@ Tool: bash
 ## Assistant
 
 ## Option 3: Create Repository Locally and Push
+
 Since we can't push to the non-existent origin, let me help you create the work locally and show you what we would push. Let me create a summary of what we have:
 
 ```
@@ -769,14 +775,16 @@ Tool: bash
 Here's what we've accomplished that should be pushed to the repository:
 
 ### Main Features Implemented:
+
 1. **Core functionality**: TypeScript program that processes `jj evolog` and creates individual changes
-2. **Async/Promise-based**: Migrated from sync `execSync` to async `execAsync` 
+2. **Async/Promise-based**: Migrated from sync `execSync` to async `execAsync`
 3. **Gunshi CLI framework**: Modern CLI with proper argument parsing
 4. **State recreation**: Actually recreates the file state from each evolog commit (not just empty commits)
 5. **Filtering options**: `--skip` and `--pick` to selectively process evolog entries
 
 ### Key Commits:
-- `1b5e4562`: "Add --skip and --pick options for filtering evolog entries" 
+
+- `1b5e4562`: "Add --skip and --pick options for filtering evolog entries"
 - `fdc76340`: "Ready for pushing to remote"
 - Various commits recreating evolog states with proper descriptions
 
@@ -859,12 +867,15 @@ Tool: bash
 Here are the key commands for listing all elided (hidden) jj commits:
 
 ### Main Command:
+
 ```bash
 jj log -r ::
 ```
+
 This shows all commits in the repository, including hidden/elided ones.
 
 ### Additional Useful Commands:
+
 ```bash
 # Show all commits with change IDs
 jj log -r :: --template 'change_id'
@@ -913,7 +924,7 @@ Tool: bash
 
 Aha! This is very revealing. The documentation says:
 
-> `hidden()`: The set of hidden commits. Resolves to `~visible()`. This is empty unless your revset includes [hidden revisions](#hidden-revisions). Note that this is *not* [the set of all previously visible commits](https://github.com/jj-vcs/jj/issues/2623).
+> `hidden()`: The set of hidden commits. Resolves to `~visible()`. This is empty unless your revset includes [hidden revisions](#hidden-revisions). Note that this is _not_ [the set of all previously visible commits](https://github.com/jj-vcs/jj/issues/2623).
 
 So `hidden()` only returns something if you already have hidden revisions in your revset. Let me try a different approach. Let me check what `visible()` returns and then try to find the opposite:
 
@@ -1130,14 +1141,15 @@ jj log -r 'visible_heads()'
 ```
 
 ### What "Hidden" Means in jj:
+
 - Commits marked as "hidden" in the display are typically those that are ancestors of the current working set but not part of the main line
 - They're still accessible and part of the repository, but jj doesn't show them in the default view to reduce clutter
 - The "hidden" marker appears in the formatted output but doesn't represent a separate revset category
 
 ### Why `hidden()` Doesn't Work:
+
 The `hidden()` revset function is designed to work with explicitly hidden revisions (like those hidden by `jj hide` or similar operations), not with the display-level "hidden" marking that you see in the log output.
 
 So the correct way to list all "elided" or hidden commits is simply: `jj log -r ::`
 
 ---
-
