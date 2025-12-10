@@ -81,12 +81,18 @@ async function createChangeForEntry(entry: EvologEntry): Promise<void> {
     // Use jj to create a new change
     const { stdout, stderr } = await execAsync(`jj new -m "${description}"`);
     
-    if (stdout) console.log(stdout);
-    if (stderr) console.error(stderr);
+    // Show the output from jj command
+    if (stdout && stdout.trim()) {
+      process.stdout.write(stdout);
+    }
+    if (stderr && stderr.trim()) {
+      process.stderr.write(stderr);
+    }
     
     console.log(`✓ Created change for ${entry.commitHash}`);
   } catch (error) {
     console.error(`✗ Failed to create change for ${entry.commitHash}:`, error);
+    throw error; // Re-throw to be handled by caller
   }
 }
 
@@ -105,7 +111,12 @@ const command = {
     
     try {
       // Get the evolog output
-      const { stdout: evologOutput } = await execAsync('jj evolog');
+      const { stdout: evologOutput, stderr: evologStderr } = await execAsync('jj evolog');
+      
+      // Show any warnings from jj evolog
+      if (evologStderr && evologStderr.trim()) {
+        console.warn('jj evolog warnings:', evologStderr);
+      }
       
       // Parse the evolog entries
       const entries = parseEvolog(evologOutput);
@@ -136,12 +147,25 @@ const command = {
         console.log(`Found ${entries.length} evolog entries to process:`);
         
         // Process each entry for real
+        let successCount = 0;
+        let errorCount = 0;
+        
         for (const entry of entries) {
-          await createChangeForEntry(entry);
+          try {
+            await createChangeForEntry(entry);
+            successCount++;
+          } catch (error) {
+            errorCount++;
+            // Error already logged in createChangeForEntry
+          }
+        }
+        
+        if (errorCount > 0) {
+          console.log(`\nCompleted with ${successCount} successes and ${errorCount} errors.`);
+        } else {
+          console.log('\nDone! All evolog entries have been processed.');
         }
       }
-      
-      console.log('\nDone! All evolog entries have been processed.');
       
     } catch (error) {
       console.error('Error processing evolog:', error);
