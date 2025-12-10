@@ -6,6 +6,26 @@ import { cli } from 'gunshi';
 
 const execAsync = promisify(exec);
 
+function parseIdList(idString: string | undefined): Set<string> {
+  if (!idString) return new Set();
+  return new Set(idString.split(',').map(id => id.trim()).filter(id => id.length > 0));
+}
+
+function shouldProcessEntry(entry: EvologEntry, skipIds: Set<string>, pickIds: Set<string>): boolean {
+  // If pick list is specified, only process entries in the pick list
+  if (pickIds.size > 0) {
+    return pickIds.has(entry.commitHash) || pickIds.has(entry.changeId || '');
+  }
+  
+  // If skip list is specified, skip entries in the skip list
+  if (skipIds.size > 0) {
+    return !skipIds.has(entry.commitHash) && !skipIds.has(entry.changeId || '');
+  }
+  
+  // If neither skip nor pick is specified, process all entries
+  return true;
+}
+
 interface EvologEntry {
   commitHash: string;
   author: string;
@@ -104,6 +124,16 @@ const command = {
       type: 'boolean',
       short: 'n',
       description: 'Show what would be done without making changes'
+    },
+    'skip': {
+      type: 'string',
+      short: 's',
+      description: 'Comma-separated list of commit IDs or change IDs to skip'
+    },
+    'pick': {
+      type: 'string',
+      short: 'p',
+      description: 'Comma-separated list of commit IDs or change IDs to process (only these will be processed)'
     }
   },
   run: async (ctx) => {
