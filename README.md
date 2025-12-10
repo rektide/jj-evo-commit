@@ -2,7 +2,7 @@
 
 > Turns everything in the current evolog into jj changes
 
-A TypeScript CLI tool that parses `jj evolog` output and creates individual jj changes for each entry. Built with [gunshi](https://gunshi.dev) for modern CLI development.
+A TypeScript CLI tool that parses `jj evolog` output and creates individual jj changes for each entry. Built with [gunshi](https://gunshi.dev) for modern CLI development and uses async/await for all operations.
 
 ## Usage
 
@@ -38,3 +38,4 @@ This project uses:
 - [gunshi](https://gunshi.dev) - Modern JavaScript CLI framework
 - TypeScript for type safety
 - tsx for running TypeScript files directly
+- Async/await and Promise-based child process execution (no sync operations)
