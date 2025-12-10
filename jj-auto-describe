@@ -2,6 +2,9 @@
 
 [ -n "$OPENCODE_MODEL" ] || OPENCODE_MODEL=deepseek/deepseek-chat
 
+# Cache for the initial all() log to avoid repeated jj log calls
+ALL_COMMITS_CACHE=""
+
 # Helper function to get the ordinal position of a commit in the full all() log
 get_commit_ordinal() {
     local commit_id="$1"
@@ -13,6 +16,16 @@ get_commit_ordinal() {
 get_commit_by_ordinal() {
     local ordinal="$1"
     jj log --no-graph -T 'commit_id++"\n"' -r 'all()' | sed -n "${ordinal}p"
+}
+
+# Helper function to get ordinal using cached results (for initial setup)
+get_commit_ordinal_initial() {
+    local commit_id="$1"
+    if [ -z "$ALL_COMMITS_CACHE" ]; then
+        # Cache the all() log on first call
+        ALL_COMMITS_CACHE=$(jj log --no-graph -T 'commit_id++"\n"' -r 'all()')
+    fi
+    echo "$ALL_COMMITS_CACHE" | grep -n "^$commit_id$" | cut -d: -f1
 }
 
 # Check if a selector argument is provided
@@ -39,7 +52,7 @@ fi
 ORDINALS=()
 COMMITS=()
 for COMMIT_ID in $COMMIT_IDS; do
-    ORDINAL=$(get_commit_ordinal "$COMMIT_ID")
+    ORDINAL=$(get_commit_ordinal_initial "$COMMIT_ID")
     if [ -n "$ORDINAL" ]; then
         ORDINALS+=("$ORDINAL")
         COMMITS+=("$COMMIT_ID")
