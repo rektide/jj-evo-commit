@@ -1,4 +1,7 @@
 #!/bin/bash
+set -x
+
+[ -n "$OPENCODE_MODEL" ] || OPENCODE_MODEL="deepseek/deepseek-chat"
 
 # Check if a selector argument is provided
 if [ $# -eq 0 ]; then
@@ -34,5 +37,5 @@ for COMMIT_ID in $COMMIT_IDS; do
     #jj show "$COMMIT_ID"
 
     # Run opencode to generate new commit message
-    opencode run "Please use 'jj show $COMMIT_ID' to look at this commit and then use 'jj describe --ignore-immutable -m \"NEW COMMIT MESSAGE\"' to set a better commit message. Focus on making the commit message clear, concise, and descriptive of what the commit actually does."
+    opencode run -m "$OPENCODE_MODEL" "Please use 'jj show $COMMIT_ID' to look at this commit and then use 'jj describe --ignore-immutable -m \"NEW COMMIT MESSAGE\"' to set a better commit message. Focus on making the commit message clear, concise, and descriptive of what the commit actually does."
 done
