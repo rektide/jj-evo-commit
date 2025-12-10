@@ -28,19 +28,11 @@ echo "Found $COMMIT_COUNT commits to process"
 for COMMIT_ID in $COMMIT_IDS; do
     echo ""
     echo "Processing commit: $COMMIT_ID"
-    
-    # Show current commit details
-    echo "Current commit details:"
-    jj show "$COMMIT_ID"
-    
-    # Run opencode to generate new commit message
-    echo ""
-    echo "Running opencode to generate new commit message..."
-    opencode run "Please use 'jj show $COMMIT_ID' to look at this commit and then use 'jj describe --ignore-immutable -m \"NEW COMMIT MESSAGE\"' to set a better commit message. Focus on making the commit message clear, concise, and descriptive of what the commit actually does."
-    
-    echo "---"
-    echo "Commit $COMMIT_ID processed."
-    echo ""
-done
 
-echo "All commits processed!"
+    # Show current commit details
+    #echo "Current commit details:"
+    #jj show "$COMMIT_ID"
+
+    # Run opencode to generate new commit message
+    opencode run "Please use 'jj show $COMMIT_ID' to look at this commit and then use 'jj describe --ignore-immutable -m \"NEW COMMIT MESSAGE\"' to set a better commit message. Focus on making the commit message clear, concise, and descriptive of what the commit actually does."
+done
