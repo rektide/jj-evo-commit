@@ -117,19 +117,25 @@ const command = {
       
       // Process each entry
       for (const entry of entries) {
+        // Create the same description logic as in createChangeForEntry
+        let description: string;
+        if (entry.description && entry.description !== '(no description set)' && entry.description !== '(empty) (no description set)') {
+          description = entry.description;
+        } else if (entry.operation) {
+          description = `Evolog: ${entry.operation}`;
+        } else {
+          description = `Evolog entry from ${entry.date}`;
+        }
+        
         if (options.dryRun) {
-          // Create the same description logic as in createChangeForEntry for dry run
-          let description: string;
-          if (entry.description && entry.description !== '(no description set)' && entry.description !== '(empty) (no description set)') {
-            description = entry.description;
-          } else if (entry.operation) {
-            description = `Evolog: ${entry.operation}`;
-          } else {
-            description = `Evolog entry from ${entry.date}`;
-          }
           console.log(`Would create change: ${description} (${entry.commitHash})`);
         } else {
-          createChangeForEntry(entry);
+          console.log(`Creating change for commit ${entry.commitHash}: ${description}`);
+          
+          // Use jj to create a new change
+          execSync(`jj new -m "${description}"`, { stdio: 'inherit' });
+          
+          console.log(`✓ Created change for ${entry.commitHash}`);
         }
       }
       
