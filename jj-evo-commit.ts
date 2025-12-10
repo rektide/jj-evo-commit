@@ -87,15 +87,15 @@ function createChangeForEntry(entry: EvologEntry): void {
 const command = {
   name: 'jj-evo-commit',
   description: 'Turns everything in the current evolog into jj changes',
-  options: {
-    dryRun: {
+  args: {
+    'dry-run': {
       type: 'boolean',
       short: 'n',
       description: 'Show what would be done without making changes'
     }
   },
   run: async (ctx) => {
-    const options = ctx.values;
+    const dryRun = ctx.values['dry-run'];
     
     try {
       // Get the evolog output
@@ -109,7 +109,7 @@ const command = {
         return;
       }
       
-      if (options.dryRun) {
+      if (dryRun) {
         console.log('Dry run mode - showing what would be created:');
         console.log(`Found ${entries.length} evolog entries to process:`);
         
