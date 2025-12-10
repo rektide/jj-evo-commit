@@ -5,13 +5,6 @@
 # Cache for the initial all() log to avoid repeated jj log calls
 ALL_COMMITS_CACHE=""
 
-# Helper function to get the ordinal position of a commit in the full all() log
-get_commit_ordinal() {
-    local commit_id="$1"
-    # Get all commits and find the line number (ordinal) of the specific commit
-    jj log --no-graph -T 'commit_id++"\n"' -r 'all()' | grep -n "^$commit_id$" | cut -d: -f1
-}
-
 # Helper function to get commit ID by ordinal position from the full all() log
 get_commit_by_ordinal() {
     local ordinal="$1"
@@ -85,5 +78,5 @@ for i in "${!ORDINALS[@]}"; do
     #jj show "$CURRENT_COMMIT"
 
     # Run opencode to generate new commit message
-    opencode run -m "$OPENCODE_MODEL" "Please use 'jj show $CURRENT_COMMIT' to look at this commit and then use 'jj describe --ignore-immutable -m \"NEW COMMIT MESSAGE\"' to set a better commit message. Focus on making the commit message clear, concise, and descriptive of what the commit actually does."
+    opencode run -m "$OPENCODE_MODEL" "Please use 'jj show $CURRENT_COMMIT' to look at this commit and then use 'jj describe --ignore-immutable -r $CURRENT_COMMIT -m \"NEW COMMIT MESSAGE\"' to set a better commit message. Focus on making the commit message clear, concise, and descriptive of what the commit actually does."
 done
