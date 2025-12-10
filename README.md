@@ -1,8 +1,12 @@
 # jj-evo-commit
 
-> Turns everything in the current evolog into jj changes
+> Turns everything in the current evolog into jj changes. Use opencode to generate commit descriptions.
 
-A small tool that parses `jj evolog` output and creates individual jj changes for each entry.
+Three small Jujutsu/jj tools:
+
+- `jj-evo-commit` - A small tool that parses `jj evolog` output and creates individual jj changes for each entry.
+- `jj-auto-describe` - Loop through a revset, using AI to create a commit message for each commit.
+- `jj-selector` - Print commit ids for a revset.
 
 ## Install
 
@@ -65,6 +69,11 @@ The tool:
 2. For each commit, runs opencode to analyze the changes
 3. Uses AI to generate a meaningful commit message
 4. Updates the commit description using `jj describe`
+
+### Future Improvements
+
+- [] way to provide additional context (currently llm left to it's own devices)
+- [] make use of the same session (currently spawns a session for each commit)
 
 ## `jj-select Usage`
 
