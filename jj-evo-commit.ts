@@ -63,7 +63,7 @@ function parseEvolog(output: string): EvologEntry[] {
   return entries;
 }
 
-async function createChangeForEntry(entry: EvologEntry): Promise<void> {
+async function recreateEvologState(entry: EvologEntry, commitHash: string): Promise<void> {
   try {
     // Create a meaningful description for the change
     let description: string;
@@ -76,22 +76,22 @@ async function createChangeForEntry(entry: EvologEntry): Promise<void> {
       description = `Evolog entry from ${entry.date}`;
     }
     
-    console.log(`Creating change for commit ${entry.commitHash}: ${description}`);
+    console.log(`Recreating state from commit ${commitHash}: ${description}`);
     
-    // Use jj to create a new change
-    const { stdout, stderr } = await execAsync(`jj new -m "${description}"`);
+    // Create a new commit based on the specific commit hash from evolog
+    // This will create a new working copy with the exact state from that commit
+    const { stdout: newStdout, stderr: newStderr } = await execAsync(`jj new ${commitHash} -m "${description}"`);
     
-    // Show the output from jj command
-    if (stdout && stdout.trim()) {
-      process.stdout.write(stdout);
+    if (newStdout && newStdout.trim()) {
+      process.stdout.write(newStdout);
     }
-    if (stderr && stderr.trim()) {
-      process.stderr.write(stderr);
+    if (newStderr && newStderr.trim()) {
+      process.stderr.write(newStderr);
     }
     
-    console.log(`✓ Created change for ${entry.commitHash}`);
+    console.log(`✓ Recreated state from ${commitHash}`);
   } catch (error) {
-    console.error(`✗ Failed to create change for ${entry.commitHash}:`, error);
+    console.error(`✗ Failed to recreate state from ${commitHash}:`, error);
     throw error; // Re-throw to be handled by caller
   }
 }
@@ -110,8 +110,8 @@ const command = {
     const dryRun = ctx.values['dry-run'];
     
     try {
-      // Get the evolog output
-      const { stdout: evologOutput, stderr: evologStderr } = await execAsync('jj evolog');
+      // Get the evolog output in chronological order (oldest first)
+      const { stdout: evologOutput, stderr: evologStderr } = await execAsync('jj evolog --reversed');
       
       // Show any warnings from jj evolog
       if (evologStderr && evologStderr.trim()) {
@@ -126,13 +126,14 @@ const command = {
         return;
       }
       
+      console.log(`Found ${entries.length} evolog entries to process in chronological order.`);
+      
       if (dryRun) {
         console.log('Dry run mode - showing what would be created:');
-        console.log(`Found ${entries.length} evolog entries to process:`);
         
         // Process each entry for dry run
         for (const entry of entries) {
-          // Create the same description logic as in createChangeForEntry
+          // Create the same description logic as in restoreAndCreateChange
           let description: string;
           if (entry.description && entry.description !== '(no description set)' && entry.description !== '(empty) (no description set)') {
             description = entry.description;
@@ -141,22 +142,20 @@ const command = {
           } else {
             description = `Evolog entry from ${entry.date}`;
           }
-          console.log(`Would create change: ${description} (${entry.commitHash})`);
+          console.log(`Would recreate state from ${entry.commitHash}: ${description}`);
         }
       } else {
-        console.log(`Found ${entries.length} evolog entries to process:`);
-        
-        // Process each entry for real
+        // Process each entry for real - in chronological order
         let successCount = 0;
         let errorCount = 0;
         
         for (const entry of entries) {
           try {
-            await createChangeForEntry(entry);
+            await recreateEvologState(entry, entry.commitHash);
             successCount++;
           } catch (error) {
             errorCount++;
-            // Error already logged in createChangeForEntry
+            // Error already logged in recreateEvologState
           }
         }
         
