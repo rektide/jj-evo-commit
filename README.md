@@ -13,6 +13,18 @@ npx tsx jj-evo-commit.ts --dry-run
 # Actually create changes for all evolog entries
 npx tsx jj-evo-commit.ts
 
+# Skip specific commits
+npm run dev -- --skip abc123def,xyz789abc
+
+# Only process specific commits
+npm run dev -- --pick abc123def,xyz789abc
+
+# Use change IDs instead of commit IDs
+npm run dev -- --pick nqmwswvq  # processes all commits in this change's evolution
+
+# Combine skip and pick (pick takes precedence)
+npm run dev -- --pick abc123 --skip abc123,def456
+
 # Or use npm scripts
 npm run dev -- --dry-run
 npm run dev
@@ -31,8 +43,18 @@ Unlike just creating empty commits, this tool actually reproduces the state of y
 ## Options
 
 - `--dry-run, -n`: Show what would be done without making changes
+- `--skip, -s <ids>`: Comma-separated list of commit IDs or change IDs to skip
+- `--pick, -p <ids>`: Comma-separated list of commit IDs or change IDs to process (only these will be processed)
 - `--help, -h`: Show help information
 - `--version, -v`: Show version information
+
+### Skip vs Pick
+
+- **Skip**: Process all evolog entries except those specified
+- **Pick**: Only process the specified evolog entries (takes precedence over skip)
+- **Both**: You can use both together - pick takes precedence if there's overlap
+
+You can specify either **commit IDs** (short hashes like `abc123def`) or **change IDs** (like `xyz123abc...`) in either list.
 
 ## Development
 
