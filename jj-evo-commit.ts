@@ -101,10 +101,6 @@ const command = {
       // Get the evolog output
       const evologOutput = execSync('jj evolog', { encoding: 'utf8' });
       
-      if (options.dryRun) {
-        console.log('Dry run mode - showing what would be created:');
-      }
-      
       // Parse the evolog entries
       const entries = parseEvolog(evologOutput);
       
@@ -113,29 +109,29 @@ const command = {
         return;
       }
       
-      console.log(`Found ${entries.length} evolog entries to process:`);
-      
-      // Process each entry
-      for (const entry of entries) {
-        // Create the same description logic as in createChangeForEntry
-        let description: string;
-        if (entry.description && entry.description !== '(no description set)' && entry.description !== '(empty) (no description set)') {
-          description = entry.description;
-        } else if (entry.operation) {
-          description = `Evolog: ${entry.operation}`;
-        } else {
-          description = `Evolog entry from ${entry.date}`;
-        }
+      if (options.dryRun) {
+        console.log('Dry run mode - showing what would be created:');
+        console.log(`Found ${entries.length} evolog entries to process:`);
         
-        if (options.dryRun) {
+        // Process each entry for dry run
+        for (const entry of entries) {
+          // Create the same description logic as in createChangeForEntry
+          let description: string;
+          if (entry.description && entry.description !== '(no description set)' && entry.description !== '(empty) (no description set)') {
+            description = entry.description;
+          } else if (entry.operation) {
+            description = `Evolog: ${entry.operation}`;
+          } else {
+            description = `Evolog entry from ${entry.date}`;
+          }
           console.log(`Would create change: ${description} (${entry.commitHash})`);
-        } else {
-          console.log(`Creating change for commit ${entry.commitHash}: ${description}`);
-          
-          // Use jj to create a new change
-          execSync(`jj new -m "${description}"`, { stdio: 'inherit' });
-          
-          console.log(`✓ Created change for ${entry.commitHash}`);
+        }
+      } else {
+        console.log(`Found ${entries.length} evolog entries to process:`);
+        
+        // Process each entry for real
+        for (const entry of entries) {
+          createChangeForEntry(entry);
         }
       }
       
